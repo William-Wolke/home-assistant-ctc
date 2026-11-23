@@ -28,7 +28,7 @@ from .modbus import (
     decode_int16,
     decode_uint16,
 )
-from .model_support import selected_model
+from .model_support import compatible_registers, is_compatible, selected_model
 from .registers import (
     NUMBER_REGISTERS,
     SENSOR_REGISTERS,
@@ -83,9 +83,11 @@ class CtcDataUpdateCoordinator(DataUpdateCoordinator[CtcData]):
     def _read_all(self) -> CtcData:
         # 1. Sensor query with timeout
         sensors = {}
-        for register in SENSOR_REGISTERS:
+        for register in compatible_registers(SENSOR_REGISTERS, self.model):
             try:
                 sensors[register.key] = self._read_sensor(register)
+            except CtcConnectionError:
+                raise
             except Exception as err:
                 # If a sensor fails, we log it, but we don't block the whole system
                 _LOGGER.error("Error reading sensor %s: %s", register.key, err)
@@ -95,21 +97,25 @@ class CtcDataUpdateCoordinator(DataUpdateCoordinator[CtcData]):
 
         # 2. Numbers (settings value) with timeout query
         numbers = {}
-        for register in NUMBER_REGISTERS:
+        for register in compatible_registers(NUMBER_REGISTERS, self.model):
             try:
                 numbers[register.key] = self._read_number(register)
+            except CtcConnectionError:
+                raise
             except Exception as err:
                 _LOGGER.error("Error reading numbers %s: %s", register.key, err)
                 continue
             finally:
                 time.sleep(DEFAULT_SENSOR_READ_TIMEOUT) # Pause after each sensor read, default 150ms
         # 3. SmartGrid-Register query
-        try:
-            smartgrid_raw = self.client.read_registers(SMARTGRID_REGISTER, 1)[0]
-        except CtcModbusError:
-            smartgrid_raw = None
-        finally:
-            time.sleep(DEFAULT_SENSOR_READ_TIMEOUT)
+        smartgrid_raw = None
+        if is_compatible("smartgrid_mode", self.model):
+            try:
+                smartgrid_raw = self.client.read_registers(SMARTGRID_REGISTER, 1)[0]
+            except CtcModbusError:
+                pass
+            finally:
+                time.sleep(DEFAULT_SENSOR_READ_TIMEOUT)
 
         return CtcData(
             sensors=sensors,

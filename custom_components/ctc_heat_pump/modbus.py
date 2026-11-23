@@ -91,7 +91,6 @@ class CtcModbusClient:
     def _request(self, function_code: int, payload: bytes) -> bytes:
         """Send one Modbus/TCP request and return the response payload."""
         self._transaction_id = (self._transaction_id + 1) % 0x10000
-        TIMEOUT_SECONDS = 0.3
         pdu = bytes([function_code]) + payload
         header = struct.pack(
             ">HHHB",
@@ -102,8 +101,8 @@ class CtcModbusClient:
         )
         sock = self._ensure_socket()
         try:
+            sock.settimeout(self.timeout)
             sock.sendall(header + pdu)
-            self._socket.settimeout(TIMEOUT_SECONDS)
             response_header = self._recv_exact(7)
             transaction_id, protocol_id, length, unit_id = struct.unpack(
                 ">HHHB",

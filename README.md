@@ -38,11 +38,10 @@ entity definitions: each sensor or control there is a deliberate choice of
 address, data type, scaling, units, and (for controls) write range. Do not
 turn the full extracted PDF table into entities automatically.
 
-`model_support.py` provides the compatibility allowlist. Add a register key to
-`REGISTER_COMPATIBILITY` only after confirming the code's model range in the
-manual or on a device. For example:
+`model_support.py` provides the compatibility allowlist used both to create
+entities and to decide which addresses the coordinator polls. Add a register
+key to `GSI_COMPATIBLE_REGISTERS` only after confirming the code's model range
+in the manual or on a device. For example:
 
 ```python
-REGISTER_COMPATIBILITY = {
-    "some_curated_sensor": frozenset({"gsi_ctc_gs"}),
-}
+GSI_COMPATIBLE_REGISTERS = frozenset({"some_curated_sensor"})
