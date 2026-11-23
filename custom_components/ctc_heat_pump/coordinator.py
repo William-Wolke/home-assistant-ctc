@@ -124,6 +124,8 @@ class CtcDataUpdateCoordinator(DataUpdateCoordinator[CtcData]):
         except CtcModbusError:
             return None
         value = _decode_value(register.data_type, words)
+        if value in register.invalid_raw_values:
+            return None
         return round(value * register.scale, 3)
 
     def _read_number(self, register: NumberRegister) -> float | None:
