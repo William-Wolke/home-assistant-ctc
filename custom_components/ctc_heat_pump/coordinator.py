@@ -87,8 +87,8 @@ class CtcDataUpdateCoordinator(DataUpdateCoordinator[CtcData]):
             try:
                 sensors[register.key] = self._read_sensor(register)
             except Exception as err:
-                # If a sensor fails, we logg it, but we don't block the whole system
-                _LOGGER.error("Error reading sensor %s", register.key, err)
+                # If a sensor fails, we log it, but we don't block the whole system
+                _LOGGER.error("Error reading sensor %s: %s", register.key, err)
                 continue
             finally:
                 time.sleep(DEFAULT_SENSOR_READ_TIMEOUT) # Pause after each sensor read, default 150ms
