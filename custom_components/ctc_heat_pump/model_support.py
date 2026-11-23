@@ -1,11 +1,9 @@
 """Model compatibility for curated CTC BMS register definitions.
 
-The BMS PDF contains many more codes than the integration should expose. Keep
-compatibility here limited to codes that the integration actually defines in
-``registers.py``. Keys omitted from the compatibility table retain the legacy
-shared-register behavior until their model support has been checked against the
-manual or a real device. This avoids silently hiding existing entities while
-allowing confirmed model-specific entries to be declared explicitly.
+The integration's existing sensor, control, and SmartGrid definitions target
+the EcoHeat/EcoZenith/EcoVent/EcoLogic product families. Keep the compatibility
+list limited to those curated codes; new model-specific codes should be added
+to ``registers.py`` and assigned their verified model set here.
 """
 
 from __future__ import annotations
@@ -15,6 +13,7 @@ from collections.abc import Iterable
 from homeassistant.config_entries import ConfigEntry
 
 from .const import CONF_MODEL, DEFAULT_MODEL
+from .registers import NUMBER_REGISTERS, SENSOR_REGISTERS, SMARTGRID_REGISTER
 
 # Register key -> model identifiers verified to implement that code.
 # Use a frozenset so the compatibility data is immutable at runtime. Add keys
@@ -44,6 +43,30 @@ REGISTER_COMPATIBILITY: dict[str, frozenset[str]] = {
     "hc1_curve_point_5_outdoor": frozenset({"gsi_ctc_gs"}),
     "hc1_curve_point_5_supply": frozenset({"gsi_ctc_gs"}),
 }
+# Model identifiers whose BMS code families the existing curated definitions
+# were written for. GSi / CTC GS and Other are deliberately not included: codes
+# for those models should be enabled only after their compatibility is checked.
+ECO_SERIES_MODELS = frozenset(
+    {
+        "ecoheat_400",
+        "ecozenith_i250",
+        "ecovent_i350f",
+        "ecozenith_i350",
+        "ecozenith_i550",
+        "ecologic",
+        "ecologic_s",
+    }
+)
+
+# Register key -> model identifiers verified to implement that code. Generate
+# entries for every curated sensor and number so adding a register cannot
+# accidentally leave it with implicit compatibility. SmartGrid is also a
+# curated register-backed entity, despite not using a SensorRegister dataclass.
+REGISTER_COMPATIBILITY: dict[str, frozenset[str]] = {
+    register.key: ECO_SERIES_MODELS
+    for register in (*SENSOR_REGISTERS, *NUMBER_REGISTERS)
+}
+REGISTER_COMPATIBILITY["smartgrid_mode"] = ECO_SERIES_MODELS
 
 
 def selected_model(entry: ConfigEntry) -> str:
@@ -55,10 +78,11 @@ def selected_model(entry: ConfigEntry) -> str:
 
 
 def is_compatible(register_key: str, model: str) -> bool:
-    """Return whether a curated code is known to apply to the selected model.
+    """Return whether a curated code is available for the selected model.
 
-    An omitted key is treated as a legacy shared definition. Once a key has
-    verified compatibility metadata, it is only exposed for the listed models.
+    An omitted key retains the legacy shared-register behavior, which is useful
+    for non-register entities. Register definitions are all explicitly listed
+    in ``REGISTER_COMPATIBILITY`` above.
     """
     compatible_models = REGISTER_COMPATIBILITY.get(register_key)
     return compatible_models is None or model in compatible_models
