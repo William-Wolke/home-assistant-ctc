@@ -28,6 +28,7 @@ from .modbus import (
     decode_int16,
     decode_uint16,
 )
+from .model_support import selected_model
 from .registers import (
     NUMBER_REGISTERS,
     SENSOR_REGISTERS,
@@ -49,9 +50,11 @@ class CtcData:
 class CtcDataUpdateCoordinator(DataUpdateCoordinator[CtcData]):
     """Class to manage fetching CTC data."""
     config_entry: ConfigEntry
+    model: str
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize the coordinator."""
+        self.model = selected_model(entry)
         self.client = CtcModbusClient(
             host=entry.data[CONF_HOST],
             port=entry.data.get(CONF_PORT, 502),
