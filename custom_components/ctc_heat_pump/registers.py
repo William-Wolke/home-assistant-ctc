@@ -28,6 +28,7 @@ class SensorRegister:
     device_class: str | None = None
     state_class: str | None = None
     enabled_default: bool = True
+    invalid_raw_values: frozenset[int] = frozenset()
 
 
 @dataclass(frozen=True, slots=True)
@@ -51,7 +52,7 @@ SENSOR_REGISTERS: tuple[SensorRegister, ...] = (
     SensorRegister("upper_heater_feedback", "Upper heater feedback", 61591, RegisterType.INT16, scale=0.1, unit="kW", device_class="power", state_class="measurement"),
     SensorRegister("outdoor_temperature", "Outdoor temperature", 62000, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
     SensorRegister("dhw_stop_temperature", "DHW stop temperature", 62001, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
-    SensorRegister("hot_water_temperature", "Hot water temperature", 62003, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
+    SensorRegister("hot_water_temperature", "Hot water temperature", 62003, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement", invalid_raw_values=frozenset({9999})),
     SensorRegister("dhw_upper_temperature", "DHW upper temperature", 62276, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
     SensorRegister("dhw_capacity", "DHW capacity", 62279, RegisterType.UINT16, scale=0.1, unit="%", state_class="measurement"),
     SensorRegister("system_status", "System status", 62005, RegisterType.UINT16),
