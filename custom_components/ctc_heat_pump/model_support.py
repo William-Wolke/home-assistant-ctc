@@ -31,6 +31,7 @@ GSI_COMPATIBLE_REGISTERS = frozenset(
         "room_temp_setpoint_hc1",         # 61509
         "heating_curve_slope_hc1",        # 61513
         "dhw_stop_temperature_control",   # 62001
+        "hc1_supply_temperature_setpoint", # 62007
         "hc1_supply_temperature",         # 62011
         "return_temperature",             # 62015
         "brine_in_temperature",           # 62087
