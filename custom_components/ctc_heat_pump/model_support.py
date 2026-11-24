@@ -38,6 +38,8 @@ GSI_COMPATIBLE_REGISTERS = frozenset(
         "brine_out_temperature",          # 62097
         "dhw_upper_temperature",          # 62276
         "dhw_capacity",                   # 62279
+        "dhw_bottom_temperature",         # 62275
+        "dhw_setpoint_float",             # 62002
         "hp1_power_consumption",           # 62331
         "immersion_heater_power",         # 62361
         "hc1_curve_point_1_outdoor",      # 61675

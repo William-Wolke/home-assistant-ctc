@@ -17,6 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import CtcDataUpdateCoordinator
 from .entity import CtcEntity
 from .model_support import is_compatible
+from .status import is_dhw_charge_active, is_periodic_extra_dhw_active
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -32,15 +33,20 @@ BINARY_SENSORS: tuple[CtcBinarySensorDescription, ...] = (
         key="dhw_charge_active_binary",
         name="DHW charge active",
         device_class=BinarySensorDeviceClass.RUNNING,
-        source_sensor_key="dhw_charge_active",
-        value_fn=lambda coordinator: _bool_from_sensor(coordinator, "dhw_charge_active"),
+        source_sensor_key="heat_pump_status",
+        value_fn=lambda coordinator: is_dhw_charge_active(
+            coordinator.data.sensors.get("heat_pump_status")
+        ),
     ),
     CtcBinarySensorDescription(
         key="dhw_extra_charge_binary",
-        name="DHW extra charge",
+        name="Periodic extra DHW active",
         device_class=BinarySensorDeviceClass.RUNNING,
-        source_sensor_key="dhw_extra_charge",
-        value_fn=lambda coordinator: _bool_from_sensor(coordinator, "dhw_extra_charge"),
+        source_sensor_key="periodic_extra_dhw_status",
+        entity_registry_enabled_default=False,
+        value_fn=lambda coordinator: is_periodic_extra_dhw_active(
+            coordinator.data.sensors.get("periodic_extra_dhw_status")
+        ),
     ),
     CtcBinarySensorDescription(
         key="active_cooling_demand_binary",
