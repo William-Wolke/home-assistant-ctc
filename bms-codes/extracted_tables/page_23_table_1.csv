@@ -1,5 +1,4 @@
-﻿BMS Register,"English
-Value shall be updated before 5 minutes",Description,RW,EcoHeat 400,EcoZenith i250,Gsi/CTC GS,EcoVent i350F,EcoZenith i350/,EcoZenith i550,EcoLogic,Ecologic S
+﻿BMS Register,English Value shall be updated before 5 minutes,Description,RW,EcoHeat 400,EcoZenith i250,Gsi/CTC GS,EcoVent i350F,EcoZenith i350/,EcoZenith i550,EcoLogic,Ecologic S
 1000,Start heatpump,,W,,,,,,,,x
 1001,Setpoint heatpump primary flow,,W,,,,,,,,x
 1002,Maximum RPS,,W,,x,x,,x,x,x,x
@@ -15,16 +14,11 @@ Value shall be updated before 5 minutes",Description,RW,EcoHeat 400,EcoZenith i2
 1012,Setpoint heat HC3,,W,,,,,,x,x,
 1013,Setpoint heat HC4,,W,,,,,,,x,
 1014,Setpoint cool,,W,x,x,x,,x,x,x,
-1015,"Zone mode HC1, 0 = Off, 1 = Heat, 2 = cool, 3 = auto,",,W,x,x,x,,x,x,x,
-,4 = On,,,,,,,,,,
-1016,"Zone mode HC2, 0 = Off, 1 = Heat, 2 = cool, 3 = auto,",,W,x,x,x,,x,x,x,
-,4 = On,,,,,,,,,,
-1017,"Zone mode HC3, 0 = Off, 1 = Heat, 2 = cool, 3 = auto,",,W,,,,,,x,x,
-,4 = On,,,,,,,,,,
-1018,"Zone mode HC4, 0 = Off, 1 = Heat, 2 = cool, 3 = auto,",,W,,,,,,x,x,
-,4 = On,,,,,,,,,,
-1019,"Zone mode Cool, 0 = Off, 1 = Heat, 2 = cool, 3 = auto,",,W,x,x,x,,x,x,x,
-,4 = On,,,,,,,,,,
+1015,"Zone mode HC1, 0 = Off, 1 = Heat, 2 = cool, 3 = auto, 4 = On",,W,x,x,x,,x,x,x,
+1016,"Zone mode HC2, 0 = Off, 1 = Heat, 2 = cool, 3 = auto, 4 = On",,W,x,x,x,,x,x,x,
+1017,"Zone mode HC3, 0 = Off, 1 = Heat, 2 = cool, 3 = auto, 4 = On",,W,,,,,,x,x,
+1018,"Zone mode HC4, 0 = Off, 1 = Heat, 2 = cool, 3 = auto, 4 = On",,W,,,,,,x,x,
+1019,"Zone mode Cool, 0 = Off, 1 = Heat, 2 = cool, 3 = auto, 4 = On",,W,x,x,x,,x,x,x,
 1020,Setpoint pool,,W,x,x,x,,x,x,x,
 1021,Boost ventilation,,W,x,x,x,,x,x,x,
 1022,"Vent mode, -1 = Reduced, 0 = Normal, 1 = Forced",,W,x,x,x,,x,x,x,
@@ -39,7 +33,4 @@ Value shall be updated before 5 minutes",Description,RW,EcoHeat 400,EcoZenith i2
 1031,Setpoint flow temp HC3,,W,,,,,,x,x,
 1032,Setpoint flow temp HC4,,W,,,,,,,x,
 1033,Setpoint DHW tank,,W,x,x,x,,x,x,x,
-1100,Virtual digital in,,W,x,x,x,,x,x,x,
-,Bits:,,,,,,,,,,
-,"0 = DI0, 1 = DI1, 2 = DI2, 3 = DI3, 4 = DI4, 5 = DI5, 6",,,,,,,,,,
-,"= DI6, 7 = DI7",,,,,,,,,,
+1100,"Virtual digital in Bits: 0 = DI0, 1 = DI1, 2 = DI2, 3 = DI3, 4 = DI4, 5 = DI5, 6 = DI6, 7 = DI7",,W,x,x,x,,x,x,x,
