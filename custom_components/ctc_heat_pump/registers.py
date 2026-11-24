@@ -57,6 +57,7 @@ SENSOR_REGISTERS: tuple[SensorRegister, ...] = (
     SensorRegister("dhw_capacity", "DHW capacity", 62279, RegisterType.UINT16, scale=0.1, unit="%", state_class="measurement"),
     SensorRegister("system_status", "System status", 62005, RegisterType.UINT16),
     SensorRegister("radiator_water_temperature", "Radiator water temperature", 62006, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
+    SensorRegister("hc1_supply_temperature_setpoint", "HC1 supply temperature setpoint", 62007, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
     SensorRegister("hc1_supply_temperature", "HC1 supply temperature", 62011, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
     SensorRegister("return_temperature", "Return temperature", 62015, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
     SensorRegister("brine_in_temperature", "Heat pump 1 brine in temperature", 62087, RegisterType.INT16, scale=0.1, unit="°C", device_class="temperature", state_class="measurement"),
