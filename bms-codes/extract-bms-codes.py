@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import re
 from pathlib import Path
 
@@ -131,6 +132,17 @@ def header_score(headers, records):
     return known, populated, len(records)
 
 
+def schema_filename(headers):
+    if headers[0] == "BMS Register" and headers[1].startswith("English"):
+        return "bms_codes.csv"
+    if headers[0] == "BMS Register" and headers[1] == "Function":
+        return "modbus_registers.csv"
+
+    schema = "\0".join(headers)
+    digest = hashlib.sha256(schema.encode("utf-8")).hexdigest()[:8]
+    return f"schema_{digest}.csv"
+
+
 def get_tables():
     # Page 23 has a clean stream layout; later pages need Camelot's hybrid
     # parser to keep the repeated column headers and split text in their cells.
@@ -199,7 +211,7 @@ def main():
             (header_score(headers, records), table.order, headers, records, table)
         )
 
-    expected_outputs = set()
+    schemas = {}
     for page, page_candidates in sorted(candidates.items()):
         _, _, headers, records, table = max(page_candidates, key=lambda item: item[0])
         if any(
@@ -209,18 +221,40 @@ def main():
             table = split_merged_model_columns(table)
             headers, records = extract_table(table.df)
 
-        output_path = OUTPUT_DIR / f"page_{page}_table_1.csv"
-        expected_outputs.add(output_path)
+        schema = tuple(headers)
+        if schema not in schemas:
+            schemas[schema] = {
+                "filename": schema_filename(headers),
+                "pages": [],
+                "records": [],
+            }
+        schemas[schema]["pages"].append(page)
+        schemas[schema]["records"].extend(records)
 
+    expected_outputs = set()
+    for schema, schema_data in schemas.items():
+        output_path = OUTPUT_DIR / schema_data["filename"]
+        expected_outputs.add(output_path)
         with output_path.open("w", newline="", encoding="utf-8-sig") as file:
             writer = csv.writer(file)
-            writer.writerow(headers)
-            writer.writerows(records)
+            writer.writerow(schema)
+            writer.writerows(schema_data["records"])
 
-        print(f"Saved {output_path} ({len(records)} register rows)")
+        pages = ", ".join(str(page) for page in schema_data["pages"])
+        print(
+            f"Saved {output_path} ({len(schema_data['records'])} register rows "
+            f"from pages {pages})"
+        )
 
     for old_output in OUTPUT_DIR.glob("page_*_table_*.csv"):
         if old_output not in expected_outputs:
+            old_output.unlink()
+    for old_output in OUTPUT_DIR.glob("schema_*.csv"):
+        if old_output not in expected_outputs:
+            old_output.unlink()
+    for filename in ("bms_codes.csv", "modbus_registers.csv"):
+        old_output = OUTPUT_DIR / filename
+        if old_output.exists() and old_output not in expected_outputs:
             old_output.unlink()
 
 

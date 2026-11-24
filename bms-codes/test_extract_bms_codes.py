@@ -16,6 +16,18 @@ class ExtractTableTests(unittest.TestCase):
             "two wrapped lines",
         )
 
+    def test_uses_one_output_name_per_known_schema(self):
+        self.assertEqual(
+            extractor.schema_filename(
+                ["BMS Register", "English Value shall be updated before 5 minutes"]
+            ),
+            "bms_codes.csv",
+        )
+        self.assertEqual(
+            extractor.schema_filename(["BMS Register", "Function"]),
+            "modbus_registers.csv",
+        )
+
     def test_merges_wrapped_cells_into_the_register_record(self):
         rows = [
             ["1001", "Heating system 1", "", "x"],
